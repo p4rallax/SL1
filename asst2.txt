@@ -1,0 +1,189 @@
+CREATE TABLE employee
+ (
+ ssn integer NOT NULL,
+ Ename CHAR(10) NOT NULL,
+ address CHAR(10),
+ salary INTEGER,
+ sex CHAR(6),
+ dob DATE,
+ PRIMARY KEY(ssn)
+ );
+
+mysql> describe employee;
++---------+----------+------+-----+---------+-------+
+| Field   | Type     | Null | Key | Default | Extra |
++---------+----------+------+-----+---------+-------+
+| ssn     | int(11)  | NO   | PRI | NULL    |       |
+| Ename   | char(10) | NO   |     | NULL    |       |
+| address | char(10) | YES  |     | NULL    |       |
+| salary  | int(11)  | YES  |     | NULL    |       |
+| sex     | char(6)  | YES  |     | NULL    |       |
+| dob     | date     | YES  |     | NULL    |       |
++---------+----------+------+-----+---------+-------+
+
+**************************************************************
+
+ CREATE TABLE dept
+ (
+ d_no integer NOT NULL,
+ dept_name CHAR(10) NOT NULL,
+ Start_date date
+ );
+
+
+ ALTER TABLE dept
+ ADD PRIMARY KEY (d_no);
+
+ ALTER TABLE dept
+ ADD COLUMN Emp_ssn INTEGER ;
+
+ ALTER TABLE dept
+ ADD FOREIGN KEY (Emp_ssn) references Employee(ssn) ;
+
+
+describe dept;
++------------+----------+------+-----+---------+-------+
+| Field      | Type     | Null | Key | Default | Extra |
++------------+----------+------+-----+---------+-------+
+| d_no       | int(11)  | NO   | PRI | NULL    |       |
+| dept_name  | char(10) | NO   |     | NULL    |       |
+| Start_date | date     | YES  |     | NULL    |       |
+| Emp_ssn    | int(11)  | YES  | MUL | NULL    |       |
++------------+----------+------+-----+---------+-------+
+
+
+***************************************************************
+
+CREATE TABLE dept_location
+ (
+    dept_no integer,
+    location
+    char(10)
+    );
+
+
+describe dept_location;
++----------+----------+------+-----+---------+-------+
+| Field    | Type     | Null | Key | Default | Extra |
++----------+----------+------+-----+---------+-------+
+| dept_no  | int(11)  | YES  |     | NULL    |       |
+| location | char(10) | YES  |     | NULL    |       |
++----------+----------+------+-----+---------+-------+
+
+
+**************************************************************
+
+
+CREATE TABLE project
+(
+project_no integer NOT NULL,
+project_name char(10) NOT NULL,
+location char(10),
+Emp_no integer,
+hpw integer,
+dept_no integer
+);
+
+ ALTER TABLE project
+ ADD PRIMARY KEY(project_no);
+
+ ALTER TABLE project
+ ADD FOREIGN KEY (Emp_no) references Employee(ssn),
+ ADD FOREIGN KEY (dept_no) references dept(d_no);
+
++--------------+----------+------+-----+---------+-------+
+| Field        | Type     | Null | Key | Default | Extra |
++--------------+----------+------+-----+---------+-------+
+| project_no   | int(11)  | NO   | PRI | NULL    |       |
+| project_name | char(10) | NO   |     | NULL    |       |
+| location     | char(10) | YES  |     | NULL    |       |
+| Emp_no       | int(11)  | YES  | MUL | NULL    |       |
+| hpw          | int(11)  | YES  |     | NULL    |       |
+| dept_no      | int(11)  | YES  | MUL | NULL    |       |
++--------------+----------+------+-----+---------+-------+
+
+**************************************************************
+
+ CREATE TABLE dependents
+ (
+ Name char(10),
+ Relation char(10),
+ dob date,
+ sex char(2),
+ Emp_no integer NOT NULL,
+ FOREIGN KEY(Emp_no) references Employee(ssn)
+ );
+
++----------+----------+------+-----+---------+-------+
+| Field    | Type     | Null | Key | Default | Extra |
++----------+----------+------+-----+---------+-------+
+| Name     | char(10) | YES  |     | NULL    |       |
+| Relation | char(10) | YES  |     | NULL    |       |
+| dob      | date     | YES  |     | NULL    |       |
+| sex      | char(2)  | YES  |     | NULL    |       |
+| Emp_no   | int(11)  | NO   | MUL | NULL    |       |
++----------+----------+------+-----+---------+-------+
+
+
+ALTER TABLE employee
+ADD COLUMN deptno int;
+
+
+ALTER TABLE employee
+ADD FOREIGN KEY (deptno)
+REFERENCES dept(d_no);
+
+SELECT *
+FROM employee CROSS JOIN dept;
+
+
+ SELECT employee.ename,employee.pos,dept.d_no
+ FROM employee,dept
+ WHERE employee.deptno = dept.d_no;
+
+---------  INNER JOIN ---------
+
+SELECT employee.ename, employee.pos , dept.d_no
+FROM employee,dept
+WHERE employee.deptno = dept.d_no;
+
+
+SELECT e.ename,e.pos,d.d_no
+FROM employee e ,dept d
+WHERE e.deptno=d.d_no;
+
+
+
+------------ LEFT JOIN ---------------- 
+
+
+ SELECT e.ssn, e.pos , d.d_no
+ FROM employee AS e LEFT JOIN dept as d
+ ON e.deptno = d.d_no;
+
+
+
+------------RIGHT JOIN -=---------
+
+
+SELECT e.ssn , e.pos , d.d_no
+FROM employee AS e RIGHT JOIN dept as d
+ON e.deptno = d.d_no;
+
+
+------------DDL Command - VIEW -------------
+
+
+
+CREATE VIEW V_emp1
+AS
+SELECT ssn,Ename,address
+FROM employee;
+
+
+
+
+ CREATE VIEW V_emp2
+ AS
+ SELECT ssn,Ename,d_no
+ FROM employee,dept;
